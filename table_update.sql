@@ -2,9 +2,16 @@ CREATE TABLE public.customer_orders_update AS TABLE public.customer_orders; # С
 
 CREATE TABLE public.customer_orders_update AS
     SELECT
-        order_id::int AS order_id,
-        order_date::date AS  order_date,
-        price::numeric AS price
+        order_id::int AS order_id, 
+        customer_name, 
+        email, 
+        order_date::date AS  order_date, 
+        product_name, 
+        quantity, 
+        price, 
+        country, 
+        order_status, 
+        notes
 
     FROM public.customer_orders;
         
@@ -44,6 +51,8 @@ UPDATE public.customer_orders_update
     SET price = REPLACE(price, ',', '');
 UPDATE public.customer_orders_update 
     SET price = REPLACE(price, '$', '');
+UPDATE public.customer_orders_update
+    SET price = ROUND(price, 2);
 
 #country +
 UPDATE public.customer_orders_update
