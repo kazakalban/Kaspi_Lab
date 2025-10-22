@@ -1,5 +1,15 @@
 CREATE TABLE public.customer_orders_update AS TABLE public.customer_orders; # Создание резерв копии ориг таблицы
 
+CREATE TABLE public.customer_orders_update AS
+    SELECT
+        order_id::int AS order_id,
+        order_date::date AS  order_date,
+        price::numeric AS price
+
+    FROM public.customer_orders;
+        
+
+
 SELECT order_id, customer_name, email, order_date, product_name, quantity, price, country, order_status, notes
 FROM public.customer_orders_update;  # Выбор всех данных из обн таблицы
 
