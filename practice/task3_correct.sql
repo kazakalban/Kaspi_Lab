@@ -113,7 +113,7 @@ $$
 DECLARE
     cleaned_table text := 'cleaned_' || table_name;
 BEGIN
-    EXECUTE format('CREATE TABLE IF NOT EXISTS %I AS SELECT * FROM %I WHERE FALSE', cleaned_table, table_name);
+    EXECUTE format('CREATE TABLE IF NOT EXISTS %I AS SELECT *, '0' AS processed FROM %I WHERE FALSE', cleaned_table, table_name);
 
     EXECUTE format($fmt$
         INSERT INTO %I
