@@ -113,7 +113,7 @@ $$
 DECLARE
     cleaned_table text := 'cleaned_' || table_name;
 BEGIN
-    EXECUTE format('CREATE TABLE IF NOT EXISTS %I AS SELECT *, '0' AS processed FROM %I WHERE FALSE', cleaned_table, table_name);
+    EXECUTE format('CREATE TABLE IF NOT EXISTS %I AS SELECT *, ''0'' AS processed FROM %I WHERE FALSE', cleaned_table, table_name);
 
     EXECUTE format($fmt$
         INSERT INTO %I
@@ -171,3 +171,61 @@ SELECT delete_duplicates('customer_orders_copy')
 SELECT create_clean_table('customer_orders_copy')
 SELECT copy_problems('customer_orders_copy')
 
+
+
+2. Запустить следующий скрипт:
+
+CREATE TABLE  total_spent(
+    customer_name text,
+    spent real
+);
+
+INSERT  INTO  total_spent VALUES
+        ('John Smith', 1300),
+        ('Mary Johnson', 430.28);
+
+3. Создать хранимую процедуру, которая:
+- в качестве параметра принимает число N
+- делает выборку из таблицы cleaned_customer_orders еще необработанных N записей
+- производит подсчет суммы покупок по клиентам
+- обновляет таблицу total_spent
+
+CREATE OR REPLACE PROCEDURE process_orders(N integer)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    rec RECORD;
+BEGIN
+    -- Создаём временную таблицу с N необработанными заказами
+    CREATE TEMP TABLE temp_orders AS
+    SELECT id, customer_name, amount
+    FROM cleaned_customer_orders
+    WHERE processed = false
+    LIMIT N;
+
+    -- Суммируем траты по каждому клиенту
+    FOR rec IN
+        SELECT customer_name, SUM(amount) AS total
+        FROM temp_orders
+        GROUP BY customer_name
+    LOOP
+        -- Если клиент уже есть в total_spent — обновляем сумму
+        UPDATE total_spent
+        SET spent = spent + rec.total
+        WHERE customer_name = rec.customer_name;
+
+        -- Если не обновился — вставляем новую запись
+        IF NOT FOUND THEN
+            INSERT INTO total_spent(customer_name, spent)
+            VALUES (rec.customer_name, rec.total);
+        END IF;
+    END LOOP;
+
+    -- Отмечаем обработанные записи
+    UPDATE cleaned_customer_orders
+    SET processed = true
+    WHERE id IN (SELECT id FROM temp_orders);
+
+    DROP TABLE temp_orders;
+END;
+$$;
