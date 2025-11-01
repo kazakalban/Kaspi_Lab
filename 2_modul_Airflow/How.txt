@@ -1,0 +1,18 @@
+Через терминал подключится к контеинеру
+docker exec -it <container_name_or_id> /bin/bash
+
+
+Чтобы не выходиои примеры
+/Users/kasym/Kaspi_Lab/2_modul_Airflow/config/airflow.cfg
+load_examples = False
+
+
+airflow standalone
+Airflow автоматически:
+✅ Создаёт SQLite-базу данных (по умолчанию — ~/airflow/airflow.db);
+✅ Инициализирует все таблицы для метаданных;
+✅ Запускает webserver (веб-интерфейс, обычно на http://localhost:8080);
+✅ Запускает scheduler (планировщик задач);
+✅ Создаёт пользователя-администратора (и показывает логин/пароль в консоли).
+
+если что то не работает то Docker перезагружай
