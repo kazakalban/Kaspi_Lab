@@ -49,8 +49,8 @@ def etl_local_to_local_dag():
     @task
     def extract_raw_data():
         # Пути к файлам
-        raw_path = Path("/Users/kasym/Kaspi_Lab/2_modul_Airflow/row_production.json")
-        staging_path = Path("/Users/kasym/Kaspi_Lab/2_modul_Airflow/staging_products.json")
+        raw_path = Path("/opt/airflow/data/raw_products.json")
+        staging_path = Path("/opt/airflow/data/staging_products.json")
     
         # Проверка существования входного файла
         if not raw_path.exists():
@@ -64,11 +64,10 @@ def etl_local_to_local_dag():
         except json.JSONDecodeError as e:
             raise ValueError(f"Ошибка при разборе JSON: {e}")
         
-        
-    
-    
-    
-    
+        # Запись в string-файл
+        with open(staging_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+        print(f"Данные записаны в {staging_path}")
     @task
     def transform_data():
         pass
@@ -76,3 +75,7 @@ def etl_local_to_local_dag():
     @task
     def load_data():
         pass
+    
+    extract_raw_data()
+
+etl_local_to_local_dag()
