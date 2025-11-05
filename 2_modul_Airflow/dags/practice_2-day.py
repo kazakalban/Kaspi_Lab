@@ -88,9 +88,9 @@ def etl_create_comments_table():
     def load_to_postgres(count: int, data: list):
         """Загружает данные в Postgres"""
 
-        if count <= 0:
-            print("Нет данных для загрузки — пропуск задачи")
-            return
+        #if count <= 0:
+         #   print("Нет данных для загрузки — пропуск задачи")
+          #  return
         postgres_hook = PostgresHook(postgres_conn_id="pg_conn")
         conn = postgres_hook.get_conn()
         cursor = conn.cursor()
