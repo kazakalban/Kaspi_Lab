@@ -292,4 +292,4 @@ def etl_create_comments_and_posts_table():
     download >> wait >> create_stage >> parse >> load_stage >> create_clean >> aggregate >> load_fact
 
 
-etl_create_comments_and_posts_table()
+#etl_create_comments_and_posts_table()

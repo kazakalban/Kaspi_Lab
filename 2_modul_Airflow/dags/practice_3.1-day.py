@@ -181,4 +181,4 @@ def etl_create_comments_and_posts_table():
 
     download_task >> wait_task >> create_task >> parsed_task >> load_task
 
-etl_create_comments_and_posts_table()
+#etl_create_comments_and_posts_table()

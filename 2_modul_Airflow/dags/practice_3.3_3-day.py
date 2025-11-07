@@ -22,7 +22,6 @@ default_args = {
     "retry_delay": timedelta(minutes=2)
 }
 
-
 def get_cursor():
     """Возвращает соединение и курсор PostgreSQL через Airflow Connection 'pg_conn'."""
     hook = PostgresHook(postgres_conn_id="pg_conn")
@@ -32,14 +31,14 @@ def get_cursor():
 
 
 @dag(
-    dag_id="etl_create_comments_and_posts_table",
+    dag_id="etl_create_comments_and_posts_table_3",
     description="ETL: загрузка JSON → Postgres",
-    schedule_interval=timedelta(days=1),
+    schedule=timedelta(days=1),
     start_date=datetime(2025, 11, 3),
     default_args=default_args,
     catchup=False,
-    tags=["etl", "json", "postgres", "aggregation"],
-)
+    tags=["etl", "json", "postgres", "aggregation"])
+
 def etl_create_comments_and_posts_table():
     """Основной ETL-процесс: скачивает JSON, сохраняет в Postgres и агрегирует данные."""
 
@@ -148,6 +147,7 @@ def etl_create_comments_and_posts_table():
         """Создает аналитические таблицы (fact, dq, users)."""
         conn, cursor = get_cursor()
 
+        #cursor.execute("DROP TABLE IF EXISTS fact_post_comments CASCADE;")
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS fact_post_comments (
                 id INTEGER PRIMARY KEY,
